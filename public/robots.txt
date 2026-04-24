@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://subnetrain.vercel.app/sitemap.xml
+
+# Crawl-delay opcional para bots menos comuns
+Crawl-delay: 1

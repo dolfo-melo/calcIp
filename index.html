@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="pt-BR" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- ── Primary SEO ──────────────────────────────────────────────────── -->
+    <title>SubnetRain — Calculadora de Sub-redes IPv4, IPv6 e VLSM Online</title>
+    <meta name="description" content="SubnetRain é uma calculadora de sub-redes profissional e gratuita. Calcule IPv4, IPv6, VLSM, máscara de sub-rede, endereço de broadcast, wildcard, hosts utilizáveis e representação binária. Exporte em CSV, PDF e JSON." />
+    <meta name="keywords" content="calculadora de sub-redes, subnet calculator, IPv4, IPv6, VLSM, CIDR, máscara de rede, subnetting, endereço de rede, broadcast, wildcard mask, redes de computadores, network calculator, IP calculator, subnet mask, network address, host calculator, variable length subnet masking, ipv6 calculator, ipv4 calculator, calculadora ipv4, calculadora ipv6, calculadora vlsm, redes tcp ip, endereçamento ip" />
+    <meta name="author" content="SubnetRain" />
+    <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+    <link rel="canonical" href="https://subnetrain.vercel.app/" />
+
+    <!-- ── Open Graph (Facebook, LinkedIn, WhatsApp) ─────────────────────── -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="SubnetRain" />
+    <meta property="og:title" content="SubnetRain — Calculadora de Sub-redes IPv4, IPv6 e VLSM Online" />
+    <meta property="og:description" content="Calcule sub-redes IPv4, IPv6 e planeje redes com VLSM gratuitamente. Exporte resultados em CSV, PDF e JSON. Sem servidor, 100% no seu navegador." />
+    <meta property="og:url" content="https://subnetrain.vercel.app/" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:locale:alternate" content="en_US" />
+
+    <!-- ── Twitter / X Card ──────────────────────────────────────────────── -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="SubnetRain — Calculadora de Sub-redes IPv4, IPv6 e VLSM" />
+    <meta name="twitter:description" content="Calcule sub-redes IPv4, IPv6 e planeje redes com VLSM. Exporte em CSV, PDF e JSON. Grátis e sem servidor." />
+    <meta name="twitter:site" content="@subnetrain" />
+
+    <!-- ── PWA / App ─────────────────────────────────────────────────────── -->
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <meta name="theme-color" content="#00ff41" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="SubnetRain" />
+    <meta name="application-name" content="SubnetRain" />
+
+    <!-- ── Performance hints ─────────────────────────────────────────────── -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+
+    <!-- ── Structured Data (JSON-LD) ─────────────────────────────────────── -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "SubnetRain",
+      "alternateName": ["Subnet Rain", "Calculadora de Sub-redes", "Subnet Calculator"],
+      "url": "https://subnetrain.vercel.app/",
+      "description": "Calculadora de sub-redes profissional e gratuita para IPv4, IPv6 e VLSM. Calcula endereço de rede, broadcast, máscara, wildcard, hosts utilizáveis e representação binária. Exportação em CSV, PDF e JSON.",
+      "applicationCategory": "UtilitiesApplication",
+      "operatingSystem": "Web",
+      "browserRequirements": "Requires JavaScript. Works in all modern browsers.",
+      "inLanguage": ["pt-BR", "en"],
+      "isAccessibleForFree": true,
+      "featureList": [
+        "Cálculo de sub-redes IPv4",
+        "Cálculo de sub-redes IPv6",
+        "VLSM — Variable Length Subnet Masking",
+        "Exportação CSV, PDF e JSON",
+        "Representação binária de IPs",
+        "Histórico persistente local",
+        "Gerenciamento de projetos de rede"
+      ],
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "BRL"
+      },
+      "author": {
+        "@type": "Organization",
+        "name": "SubnetRain"
+      }
+    }
+    </script>
+
+    <!-- ── FAQ Structured Data ──────────────────────────────────────────── -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "O que é uma calculadora de sub-redes?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Uma calculadora de sub-redes (subnet calculator) é uma ferramenta que divide endereços IP em blocos menores (sub-redes), calculando automaticamente endereço de rede, broadcast, máscara, wildcard e total de hosts utilizáveis."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "O que é VLSM em redes de computadores?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "VLSM (Variable Length Subnet Masking) é uma técnica que permite dividir uma rede em sub-redes de tamanhos diferentes, otimizando o uso do espaço de endereçamento IP. O SubnetRain calcula VLSM automaticamente."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Como calcular sub-redes IPv4?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Para calcular sub-redes IPv4, basta inserir o endereço IP e a máscara CIDR (ex: 192.168.1.0/24) no SubnetRain. A ferramenta retorna o endereço de rede, broadcast, primeiro e último host, máscara decimal, wildcard e representação binária."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Qual a diferença entre IPv4 e IPv6?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "IPv4 usa endereços de 32 bits (ex: 192.168.1.1), suportando ~4 bilhões de endereços. IPv6 usa 128 bits (ex: 2001:db8::1), suportando praticamente endereços ilimitados. O SubnetRain suporta cálculo de ambos."
+          }
+        }
+      ]
+    }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
