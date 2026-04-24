@@ -1,6 +1,6 @@
 import { AppProvider } from './context/AppContext';
 import LandingPage from './components/Landing/LandingPage';
-import './index.css';
+import "./index.css"  
 
 export default function App() {
   return (

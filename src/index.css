@@ -1,8 +1,79 @@
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* ── Theme tokens (Tailwind v4) ──────────────────────────────────────────── */
+@theme {
+  /* Colors */
+  --color-term-black:   #020c02;
+  --color-term-darker:  #040f04;
+  --color-term-dark:    #061006;
+  --color-term-surface: #0a180a;
+  --color-term-card:    #0d1f0d;
+  --color-term-border:  #1a3a1a;
+  --color-term-dim:     #1f4d1f;
+  --color-term-muted:   #2d7a2d;
+  --color-term-mid:     #3a9e3a;
+  --color-term-base:    #00c832;
+  --color-term-bright:  #00ff41;
+  --color-term-glow:    #39ff14;
+  --color-term-amber:   #ffb300;
+  --color-term-red:     #ff3333;
+  --color-term-cyan:    #00ffcc;
+  --color-term-white:   #e0ffe0;
+
+  /* Font families */
+  --font-mono: "JetBrains Mono", "Fira Code", "Courier New", monospace;
+  --font-sans: "JetBrains Mono", monospace;
+
+  /* Box shadows */
+  --shadow-glow-sm:    0 0 6px  rgba(0,255,65,0.4);
+  --shadow-glow:       0 0 12px rgba(0,255,65,0.5);
+  --shadow-glow-lg:    0 0 24px rgba(0,255,65,0.4), 0 0 48px rgba(0,255,65,0.15);
+  --shadow-glow-xl:    0 0 40px rgba(0,255,65,0.5), 0 0 80px rgba(0,255,65,0.2);
+  --shadow-inset-glow: inset 0 0 12px rgba(0,255,65,0.08);
+  --shadow-amber-glow: 0 0 12px rgba(255,179,0,0.5);
+  --shadow-red-glow:   0 0 12px rgba(255,51,51,0.5);
+
+  /* Animations */
+  --animate-blink:       blink 1.2s step-end infinite;
+  --animate-scan:        scanline 8s linear infinite;
+  --animate-flicker:     flicker 0.15s infinite;
+  --animate-fade-in:     fadeIn 0.3s ease-out;
+  --animate-slide-up:    slideUp 0.3s ease-out;
+  --animate-pulse-green: pulseGreen 2s ease-in-out infinite;
+  --animate-type-in:     typeIn 0.5s steps(20) both;
+
+  /* Keyframes */
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0; }
+  }
+  @keyframes scanline {
+    0%   { background-position: 0 0; }
+    100% { background-position: 0 100vh; }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulseGreen {
+    0%, 100% { box-shadow: 0 0 8px rgba(0,255,65,0.3); }
+    50%       { box-shadow: 0 0 20px rgba(0,255,65,0.6), 0 0 40px rgba(0,255,65,0.2); }
+  }
+  @keyframes flicker {
+    0%   { opacity: 0.97; }
+    50%  { opacity: 1; }
+    100% { opacity: 0.98; }
+  }
+  @keyframes typeIn {
+    from { width: 0; }
+    to   { width: 100%; }
+  }
+}
 
 /* ── Base resets ─────────────────────────────────────────────────────────── */
 @layer base {
@@ -107,7 +178,10 @@
   }
 
   .term-btn-ghost {
-    @apply term-btn border-term-dim text-term-mid;
+    @apply relative font-mono text-sm font-semibold px-4 py-2;
+    @apply border border-term-dim text-term-mid bg-transparent;
+    @apply cursor-pointer transition-all duration-150;
+    @apply tracking-widest uppercase;
   }
   .term-btn-ghost:hover {
     @apply border-term-bright text-term-bright bg-transparent;
@@ -115,7 +189,10 @@
   }
 
   .term-btn-sm {
-    @apply term-btn text-xs px-3 py-1;
+    @apply relative font-mono text-xs font-semibold px-3 py-1;
+    @apply border border-term-bright text-term-bright bg-transparent;
+    @apply cursor-pointer transition-all duration-150;
+    @apply tracking-widest uppercase;
   }
 
   .term-btn-amber {
@@ -250,4 +327,3 @@
 
 /* ScrollTrigger GSAP — previne flash of unstyled content */
 [data-gsap-hidden] { opacity: 0; }
-
