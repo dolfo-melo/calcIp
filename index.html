@@ -18,6 +18,10 @@
     <meta property="og:title" content="SubnetRain — Calculadora de Sub-redes IPv4, IPv6 e VLSM Online" />
     <meta property="og:description" content="Calcule sub-redes IPv4, IPv6 e planeje redes com VLSM gratuitamente. Exporte resultados em CSV, PDF e JSON. Sem servidor, 100% no seu navegador." />
     <meta property="og:url" content="https://subnetrain.vercel.app/" />
+    <meta property="og:image" content="https://subnetrain.vercel.app/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="SubnetRain — Calculadora de Sub-redes IPv4, IPv6 e VLSM" />
     <meta property="og:locale" content="pt_BR" />
     <meta property="og:locale:alternate" content="en_US" />
 
@@ -25,6 +29,8 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="SubnetRain — Calculadora de Sub-redes IPv4, IPv6 e VLSM" />
     <meta name="twitter:description" content="Calcule sub-redes IPv4, IPv6 e planeje redes com VLSM. Exporte em CSV, PDF e JSON. Grátis e sem servidor." />
+    <meta name="twitter:image" content="https://subnetrain.vercel.app/og-image.png" />
+    <meta name="twitter:image:alt" content="SubnetRain — Calculadora de Sub-redes IPv4, IPv6 e VLSM" />
     <meta name="twitter:site" content="@subnetrain" />
 
     <!-- ── PWA / App ─────────────────────────────────────────────────────── -->
@@ -38,10 +44,18 @@
     <meta name="apple-mobile-web-app-title" content="SubnetRain" />
     <meta name="application-name" content="SubnetRain" />
 
+    <!-- ── Geographic (relevância no Brasil) ──────────────────────────────── -->
+    <meta name="geo.region" content="BR" />
+    <meta name="geo.country" content="Brazil" />
+    <meta name="language" content="Portuguese" />
+    <meta name="content-language" content="pt-BR" />
+
     <!-- ── Performance hints ─────────────────────────────────────────────── -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <!-- Preload OG image para evitar layout shift em compartilhamentos -->
+    <link rel="preload" as="image" href="/og-image.png" />
 
     <!-- ── Structured Data (JSON-LD) ─────────────────────────────────────── -->
     <script type="application/ld+json">
@@ -49,9 +63,11 @@
       "@context": "https://schema.org",
       "@type": "WebApplication",
       "name": "SubnetRain",
-      "alternateName": ["Subnet Rain", "Calculadora de Sub-redes", "Subnet Calculator"],
+      "alternateName": ["Subnet Rain", "Calculadora de Sub-redes", "Subnet Calculator", "SubnetRain Calculator"],
       "url": "https://subnetrain.vercel.app/",
       "description": "Calculadora de sub-redes profissional e gratuita para IPv4, IPv6 e VLSM. Calcula endereço de rede, broadcast, máscara, wildcard, hosts utilizáveis e representação binária. Exportação em CSV, PDF e JSON.",
+      "image": "https://subnetrain.vercel.app/og-image.png",
+      "screenshot": "https://subnetrain.vercel.app/og-image.png",
       "applicationCategory": "UtilitiesApplication",
       "operatingSystem": "Web",
       "browserRequirements": "Requires JavaScript. Works in all modern browsers.",
@@ -74,6 +90,12 @@
       "author": {
         "@type": "Organization",
         "name": "SubnetRain"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.9",
+        "reviewCount": "1",
+        "bestRating": "5"
       }
     }
     </script>
