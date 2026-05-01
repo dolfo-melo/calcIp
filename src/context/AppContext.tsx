@@ -36,7 +36,8 @@ type Action =
   | { type: 'SET_PROJECTS'; projects: Project[] }
   | { type: 'SET_ACTIVE_PROJECT'; project: Project | null }
   | { type: 'SET_VLSM_RESULTS'; results: VLSMEntry[] }
-  | { type: 'UPDATE_PROJECT'; project: Project };
+  | { type: 'UPDATE_PROJECT'; project: Project }
+  | { type: 'REMOVE_VLSM_FROM_PROJECT'; projectId: string; vlsmIndex: number };
 
 function appReducer(state: AppState, action: Action): AppState {
   switch (action.type) {
@@ -81,6 +82,8 @@ interface AppContextValue {
   createProject: (name: string, description?: string) => void;
   removeProject: (id: string) => void;
   addToProject: (projectId: string, result: CalcResult) => void;
+  addVLSMToProject: (projectId: string, entries: VLSMEntry[]) => void;
+  removeVLSMFromProject: (projectId: string, index: number) => void;
 }
 
 const AppContext = createContext<AppContextValue | null>(null);
@@ -136,8 +139,32 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     dispatch({ type: 'UPDATE_PROJECT', project: updated });
   }, [state.projects]);
 
+  const addVLSMToProject = useCallback((projectId: string, entries: VLSMEntry[]) => {
+    const project = state.projects.find((p) => p.id === projectId);
+    if (!project) return;
+    const updated = {
+      ...project,
+      vlsmResults: [...(project.vlsmResults ?? []), entries],
+      updatedAt: Date.now(),
+    };
+    saveProject(updated);
+    dispatch({ type: 'UPDATE_PROJECT', project: updated });
+  }, [state.projects]);
+
+  const removeVLSMFromProject = useCallback((projectId: string, index: number) => {
+    const project = state.projects.find((p) => p.id === projectId);
+    if (!project) return;
+    const updated = {
+      ...project,
+      vlsmResults: (project.vlsmResults ?? []).filter((_, i) => i !== index),
+      updatedAt: Date.now(),
+    };
+    saveProject(updated);
+    dispatch({ type: 'UPDATE_PROJECT', project: updated });
+  }, [state.projects]);
+
   return (
-    <AppContext.Provider value={{ state, dispatch, addResult, createProject, removeProject, addToProject }}>
+    <AppContext.Provider value={{ state, dispatch, addResult, createProject, removeProject, addToProject, addVLSMToProject, removeVLSMFromProject }}>
       {children}
     </AppContext.Provider>
   );

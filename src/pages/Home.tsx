@@ -98,6 +98,9 @@ export default function Home() {
             SUBNETRAIN v1.0 :: CALCULADORA DE SUB-REDES
           </span>
           <span className="text-term-muted text-[10px] font-mono">
+            Desenvolvido por: <a href="https://dolfo-melo.com.br">Rodolfo Melo</a>
+          </span>
+          <span className="text-term-muted text-[10px] font-mono">
             HISTÓRICO LOCAL · SEM SERVIDOR · MVP
           </span>
         </div>

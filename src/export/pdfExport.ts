@@ -14,7 +14,11 @@ function addHeader(doc: jsPDF, title: string) {
   doc.setFillColor(...DARK);
   doc.rect(0, 0, 210, 28, 'F');
 
-  // Logo text
+  // Logo
+  const logoUrl = './logo.svg'; 
+  doc.addImage(logoUrl, 'SVG', 14, 10, 30, 30);
+
+  // Tittles
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(18);
   doc.setFont('helvetica', 'bold');
@@ -72,6 +76,7 @@ export function exportSubnetToPDF(results: SubnetResult[], title = 'Relatório d
 
     const rows = [
       ['Endereço de Rede', r.networkAddress, 'Broadcast', r.broadcastAddress],
+      ['Gateway', r.gateway ?? r.firstHost, 'Classe', r.networkClass],
       ['Primeiro Host', r.firstHost, 'Último Host', r.lastHost],
       ['Máscara', r.subnetMask, 'Wildcard', r.wildcardMask],
       ['Total de IPs', r.totalIPs.toLocaleString(), 'Hosts Utilizáveis', r.usableHosts.toLocaleString()],
@@ -107,7 +112,7 @@ export function exportVLSMToPDF(entries: VLSMEntry[], baseNetwork: string) {
 
   autoTable(doc, {
     startY: 36,
-    head: [['#', 'Sub-rede', 'Req. Hosts', 'Hosts Aloc.', 'Rede/CIDR', 'Máscara', '1° Host', 'Último Host', 'Broadcast']],
+    head: [['#', 'Sub-rede', 'Req. Hosts', 'Hosts Aloc.', 'Rede/CIDR', 'Máscara', 'Gateway', '1° Host', 'Último Host', 'Broadcast']],
     body: entries.map((e, i) => [
       i + 1,
       e.requirementName,
@@ -115,6 +120,7 @@ export function exportVLSMToPDF(entries: VLSMEntry[], baseNetwork: string) {
       e.usableHosts,
       `${e.networkAddress}/${e.cidr}`,
       e.subnetMask,
+      e.gateway,
       e.firstHost,
       e.lastHost,
       e.broadcastAddress,

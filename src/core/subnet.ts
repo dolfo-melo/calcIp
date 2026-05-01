@@ -16,6 +16,8 @@ export interface SubnetResult {
   broadcastAddress: string;
   firstHost: string;
   lastHost: string;
+  gateway?: string;
+  firstUsable?: string;
   subnetMask: string;
   wildcardMask: string;
   totalIPs: number;
@@ -51,6 +53,10 @@ export function calculateSubnet(ip: string, cidr: number): SubnetResult {
   const subnetMask = cidrToMask(cidr);
   const wildcardMask = intToIPv4(~maskInt >>> 0);
 
+  // firstUsable = gateway+1 (first IP available for workstations/servers)
+  // For /30 (2 usable) firstUsable == lastHost; for /31+/32 same as firstHost
+  const firstUsableInt = cidr <= 30 ? firstHostInt + 1 : firstHostInt;
+
   return {
     id: crypto.randomUUID(),
     timestamp: Date.now(),
@@ -60,6 +66,8 @@ export function calculateSubnet(ip: string, cidr: number): SubnetResult {
     broadcastAddress: intToIPv4(broadcastInt),
     firstHost: intToIPv4(firstHostInt),
     lastHost: intToIPv4(lastHostInt),
+    gateway: intToIPv4(firstHostInt),
+    firstUsable: intToIPv4(firstUsableInt),
     subnetMask,
     wildcardMask,
     totalIPs,

@@ -30,6 +30,8 @@ function calcVLSMEntry(networkInt: number, cidr: number, req: VLSMRequirement): 
   const usableHosts = cidr >= 31 ? 0 : totalIPs - 2;
   const subnetMask = cidrToMask(cidr);
   const wildcardMask = intToIPv4(~maskInt >>> 0);
+  const gatewayInt = networkInt + 1;
+  const firstUsableInt = cidr <= 30 ? gatewayInt + 1 : gatewayInt;
 
   return {
     id: crypto.randomUUID(),
@@ -38,8 +40,10 @@ function calcVLSMEntry(networkInt: number, cidr: number, req: VLSMRequirement): 
     cidr,
     networkAddress: intToIPv4(networkInt),
     broadcastAddress: intToIPv4(broadcastInt),
-    firstHost: intToIPv4(networkInt + 1),
+    firstHost: intToIPv4(gatewayInt),
     lastHost: intToIPv4(broadcastInt - 1),
+    gateway: intToIPv4(gatewayInt),
+    firstUsable: intToIPv4(firstUsableInt),
     subnetMask,
     wildcardMask,
     totalIPs,

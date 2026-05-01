@@ -291,6 +291,31 @@
     content: '█';
     @apply animate-blink text-term-bright;
   }
+
+  /* ─── Modal overlay ──────────────────────────────────────────────────────── */
+  .term-modal-overlay {
+    @apply fixed inset-0 z-50 flex items-center justify-center;
+    background: rgba(2, 12, 2, 0.88);
+    backdrop-filter: blur(3px);
+  }
+
+  .term-modal {
+    @apply relative w-full mx-4 bg-term-card border border-term-dim;
+    max-width: 680px;
+    max-height: 88vh;
+    overflow-y: auto;
+    box-shadow: 0 0 40px rgba(0,255,65,0.15), 0 0 1px rgba(0,255,65,0.6);
+  }
+
+  /* Corner decorations on modal */
+  .term-modal::before {
+    content: '';
+    @apply absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-term-bright;
+  }
+  .term-modal::after {
+    content: '';
+    @apply absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-term-bright;
+  }
 }
 
 /* ── Utility extras ──────────────────────────────────────────────────────── */

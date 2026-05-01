@@ -3,8 +3,10 @@ import { calculateVLSM, VLSMEntry, VLSMRequirement } from '../../core/vlsm';
 import { isValidIPv4, parseMaskInput } from '../../core/utils';
 import { exportVLSMToCSV, exportToJSON } from '../../export/csvExport';
 import { exportVLSMToPDF } from '../../export/pdfExport';
+import { useApp } from '../../context/AppContext';
 
 export default function CalculatorVLSM() {
+  const { dispatch } = useApp();
   const [baseIP, setBaseIP] = useState('192.168.10.0');
   const [baseMask, setBaseMask] = useState('24');
   const [requirements, setRequirements] = useState<VLSMRequirement[]>([
@@ -36,7 +38,11 @@ export default function CalculatorVLSM() {
     setError('');
     const res = calculateVLSM(baseIP.trim(), cidr, valid);
     if ('error' in res) { setError(res.error); setResults(null); }
-    else setResults(res);
+    else {
+      setResults(res);
+      // Persist to global state so ProjectManager can import
+      dispatch({ type: 'SET_VLSM_RESULTS', results: res });
+    }
   }
 
   const baseLabel = `${baseIP}/${parseMaskInput(baseMask) ?? '?'}`;
@@ -141,7 +147,7 @@ export default function CalculatorVLSM() {
               <table className="term-table">
                 <thead>
                   <tr>
-                    {['#', 'NOME', 'REQ', 'ALOC', 'REDE/CIDR', 'MÁSCARA', '1° HOST', 'ÚLT. HOST', 'BROADCAST'].map(h => (
+                    {['#', 'NOME', 'REQ', 'ALOC', 'REDE/CIDR', 'MÁSCARA', 'GATEWAY', '1° ÚTIL', 'ÚLT. HOST', 'BROADCAST'].map(h => (
                       <th key={h}>{h}</th>
                     ))}
                   </tr>
@@ -159,7 +165,8 @@ export default function CalculatorVLSM() {
                         {r.networkAddress}/{r.cidr}
                       </td>
                       <td className="text-term-white">{r.subnetMask}</td>
-                      <td className="text-term-cyan">{r.firstHost}</td>
+                      <td className="text-term-amber text-glow-amber font-semibold">{r.gateway}</td>
+                      <td className="text-term-cyan">{r.firstUsable ?? r.firstHost}</td>
                       <td className="text-term-cyan">{r.lastHost}</td>
                       <td className="text-term-amber">{r.broadcastAddress}</td>
                     </tr>

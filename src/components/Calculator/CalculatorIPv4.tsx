@@ -130,17 +130,30 @@ export default function CalculatorIPv4() {
           </div>
 
           <div className="p-4">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 mb-4">
-              {/* Key cells */}
+            {/* Primary sequence: Rede → Máscara → Gateway → 1°Útil → Último Host → Broadcast */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 mb-2">
               {[
-                { label: 'ENDEREÇO REDE', value: result.networkAddress, cls: 'text-term-bright text-glow' },
-                { label: 'BROADCAST',     value: result.broadcastAddress, cls: 'text-term-amber text-glow-amber' },
-                { label: 'PRIMEIRO HOST', value: result.firstHost,       cls: 'text-term-cyan text-glow-cyan' },
-                { label: 'ÚLTIMO HOST',   value: result.lastHost,        cls: 'text-term-cyan text-glow-cyan' },
-                { label: 'MÁSCARA',       value: result.subnetMask,      cls: 'text-term-white' },
-                { label: 'WILDCARD',      value: result.wildcardMask,    cls: 'text-term-mid' },
-                { label: 'TOTAL IPs',     value: result.totalIPs.toLocaleString('pt-BR'), cls: 'text-term-white' },
-                { label: 'HOSTS ÚTEIS',   value: result.usableHosts.toLocaleString('pt-BR'), cls: 'text-term-bright text-glow-sm' },
+                { label: 'REDE',      value: result.networkAddress,                       cls: 'text-term-bright text-glow' },
+                { label: 'MÁSCARA',   value: result.subnetMask,                           cls: 'text-term-white' },
+                { label: 'GATEWAY',   value: result.gateway    ?? result.firstHost,        cls: 'text-term-amber text-glow-amber' },
+                { label: '1° ÚTIL',   value: result.firstUsable ?? result.firstHost,       cls: 'text-term-cyan text-glow-cyan' },
+                { label: 'ÚLT. HOST', value: result.lastHost,                             cls: 'text-term-cyan text-glow-cyan' },
+                { label: 'BROADCAST', value: result.broadcastAddress,                     cls: 'text-term-amber text-glow-amber' },
+              ].map(cell => (
+                <div key={cell.label} className="term-result-cell">
+                  <div className="text-term-muted text-[10px] tracking-widest uppercase mb-1">{cell.label}</div>
+                  <div className={`font-mono text-sm font-semibold ${cell.cls}`}>{cell.value}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Secondary info */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 mb-4">
+              {[
+                { label: 'WILDCARD',    value: result.wildcardMask,                             cls: 'text-term-mid' },
+                { label: 'TOTAL IPs',   value: result.totalIPs.toLocaleString('pt-BR'),         cls: 'text-term-white' },
+                { label: 'HOSTS ÚTEIS', value: result.usableHosts.toLocaleString('pt-BR'),      cls: 'text-term-bright text-glow-sm' },
+                { label: 'CLASSE',      value: result.networkClass,                             cls: 'text-term-mid' },
               ].map(cell => (
                 <div key={cell.label} className="term-result-cell">
                   <div className="text-term-muted text-[10px] tracking-widest uppercase mb-1">{cell.label}</div>
