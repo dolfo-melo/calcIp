@@ -120,7 +120,7 @@ export function exportVLSMToPDF(entries: VLSMEntry[], baseNetwork: string) {
       e.usableHosts,
       `${e.networkAddress}/${e.cidr}`,
       e.subnetMask,
-      e.gateway,
+      e.gateway ?? '',
       e.firstHost,
       e.lastHost,
       e.broadcastAddress,
