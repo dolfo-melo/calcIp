@@ -14,11 +14,7 @@ function addHeader(doc: jsPDF, title: string) {
   doc.setFillColor(...DARK);
   doc.rect(0, 0, 210, 28, 'F');
 
-  // Logo
-  const logoUrl = './logo.svg'; 
-  doc.addImage(logoUrl, 'SVG', 14, 10, 30, 30);
-
-  // Tittles
+  // Títulos
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(18);
   doc.setFont('helvetica', 'bold');
