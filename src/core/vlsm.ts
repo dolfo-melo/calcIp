@@ -33,6 +33,9 @@ function calcVLSMEntry(networkInt: number, cidr: number, req: VLSMRequirement): 
   const gatewayInt = networkInt + 1;
   const firstUsableInt = cidr <= 30 ? gatewayInt + 1 : gatewayInt;
 
+  const parentCidr = cidr % 8 === 0 ? cidr : Math.floor(cidr / 8) * 8;
+  const numberOfSubnets = Math.pow(2, cidr - parentCidr);
+
   return {
     id: crypto.randomUUID(),
     timestamp: Date.now(),
@@ -49,6 +52,7 @@ function calcVLSMEntry(networkInt: number, cidr: number, req: VLSMRequirement): 
     totalIPs,
     usableHosts,
     networkClass: '',
+    numberOfSubnets,
     ipBinary: '',
     maskBinary: '',
     requirementName: req.name,
