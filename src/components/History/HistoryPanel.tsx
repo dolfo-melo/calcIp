@@ -101,7 +101,7 @@ export default function HistoryPanel() {
                             {(r as SubnetResult).inputIP}/{(r as SubnetResult).cidr}
                           </div>
                           <div className="text-term-muted text-[10px] font-mono mt-0.5">
-                            rede:{(r as SubnetResult).networkAddress} · gw:{(r as SubnetResult).gateway ?? (r as SubnetResult).firstHost} · {(r as SubnetResult).usableHosts}h · {formatTime(r.timestamp)}
+                            rede:{(r as SubnetResult).networkAddress} · gw:{(r as SubnetResult).gateway ?? (r as SubnetResult).firstHost} · {(r as SubnetResult).numberOfSubnets} redes · {(r as SubnetResult).usableHosts}h
                           </div>
                         </>
                       ) : (

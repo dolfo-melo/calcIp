@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { calculateSubnet, SubnetResult } from '../../core/subnet';
+import { calculateSubnet, SubnetResult, generatePossibleSubnets } from '../../core/subnet';
 import { isValidIPv4, parseMaskInput } from '../../core/utils';
 import { useApp } from '../../context/AppContext';
 import BinaryDisplay from './BinaryDisplay';
 import ExportBar from './ExportBar';
+import PossibleSubnetsModal from './PossibleSubnetsModal';
 
 export default function CalculatorIPv4() {
   const { state, addResult, addToProject } = useApp();
@@ -12,6 +13,8 @@ export default function CalculatorIPv4() {
   const [ipError, setIpError] = useState('');
   const [maskError, setMaskError] = useState('');
   const [result, setResult] = useState<SubnetResult | null>(null);
+  const [showPossible, setShowPossible] = useState(false);
+  const [possibleSubnets, setPossibleSubnets] = useState<SubnetResult[]>([]);
 
   function validate(): { ip: string; cidr: number } | null {
     let valid = true;
@@ -31,6 +34,13 @@ export default function CalculatorIPv4() {
     const res = calculateSubnet(parsed.ip, parsed.cidr);
     setResult(res);
     addResult(res);
+  }
+
+  function handleShowPossible() {
+    if (!result) return;
+    const subnets = generatePossibleSubnets(result.networkAddress, result.cidr);
+    setPossibleSubnets(subnets);
+    setShowPossible(true);
   }
 
   function handleKeyDown(e: React.KeyboardEvent) {
@@ -133,12 +143,12 @@ export default function CalculatorIPv4() {
             {/* Primary sequence: Rede → Máscara → Gateway → 1°Útil → Último Host → Broadcast */}
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 mb-2">
               {[
-                { label: 'REDE',      value: result.networkAddress,                       cls: 'text-term-bright text-glow' },
-                { label: 'MÁSCARA',   value: result.subnetMask,                           cls: 'text-term-white' },
-                { label: 'GATEWAY',   value: result.gateway    ?? result.firstHost,        cls: 'text-term-amber text-glow-amber' },
-                { label: '1° ÚTIL',   value: result.firstUsable ?? result.firstHost,       cls: 'text-term-cyan text-glow-cyan' },
-                { label: 'ÚLT. HOST', value: result.lastHost,                             cls: 'text-term-cyan text-glow-cyan' },
-                { label: 'BROADCAST', value: result.broadcastAddress,                     cls: 'text-term-amber text-glow-amber' },
+                { label: 'REDE', value: result.networkAddress, cls: 'text-term-bright text-glow' },
+                { label: 'MÁSCARA', value: result.subnetMask, cls: 'text-term-white' },
+                { label: 'GATEWAY', value: result.gateway ?? result.firstHost, cls: 'text-term-amber text-glow-amber' },
+                { label: '1° ÚTIL', value: result.firstUsable ?? result.firstHost, cls: 'text-term-cyan text-glow-cyan' },
+                { label: 'ÚLT. HOST', value: result.lastHost, cls: 'text-term-cyan text-glow-cyan' },
+                { label: 'BROADCAST', value: result.broadcastAddress, cls: 'text-term-amber text-glow-amber' },
               ].map(cell => (
                 <div key={cell.label} className="term-result-cell">
                   <div className="text-term-muted text-[10px] tracking-widest uppercase mb-1">{cell.label}</div>
@@ -148,12 +158,13 @@ export default function CalculatorIPv4() {
             </div>
 
             {/* Secondary info */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 mb-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 mb-4">
               {[
-                { label: 'WILDCARD',    value: result.wildcardMask,                             cls: 'text-term-mid' },
-                { label: 'TOTAL IPs',   value: result.totalIPs.toLocaleString('pt-BR'),         cls: 'text-term-white' },
-                { label: 'HOSTS ÚTEIS', value: result.usableHosts.toLocaleString('pt-BR'),      cls: 'text-term-bright text-glow-sm' },
-                { label: 'CLASSE',      value: result.networkClass,                             cls: 'text-term-mid' },
+                { label: 'WILDCARD', value: result.wildcardMask, cls: 'text-term-mid' },
+                { label: 'TOTAL IPs', value: result.totalIPs.toLocaleString('pt-BR'), cls: 'text-term-white' },
+                { label: 'HOSTS ÚTEIS', value: result.usableHosts.toLocaleString('pt-BR'), cls: 'text-term-bright text-glow-sm' },
+                { label: 'CLASSE', value: result.networkClass, cls: 'text-term-mid' },
+                { label: 'SUB-REDES', value: result.numberOfSubnets.toLocaleString('pt-BR'), cls: 'text-term-cyan text-glow-cyan' },
               ].map(cell => (
                 <div key={cell.label} className="term-result-cell">
                   <div className="text-term-muted text-[10px] tracking-widest uppercase mb-1">{cell.label}</div>
@@ -178,25 +189,46 @@ export default function CalculatorIPv4() {
             <div className="my-3 border-t border-term-border" />
 
             {/* Export + project actions */}
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <ExportBar results={[result]} />
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex flex-wrap items-center gap-3">
+                <ExportBar results={[result]} />
+                <button 
+                  className="term-btn-cyan text-xs py-1"
+                  onClick={handleShowPossible}
+                  disabled={result.cidr >= 31}
+                  title={result.cidr >= 31 ? "Não disponível para /31 ou /32" : "Mostrar possíveis sub-redes"}
+                >
+                  ☷ TODAS AS SUB-REDES
+                </button>
+              </div>
               {state.projects.length > 0 && (
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-term-muted text-[10px] font-mono tracking-widest">SALVAR EM:</span>
-                  {state.projects.slice(0, 3).map(p => (
-                    <button
-                      key={p.id}
-                      className="term-btn-ghost text-xs px-2 py-0.5"
-                      onClick={() => addToProject(p.id, result)}
-                    >
-                      ▹ {p.name.length > 14 ? p.name.slice(0, 14) + '…' : p.name}
-                    </button>
-                  ))}
+                <div className="flex items-center gap-2 flex-wrap bg-term-bg/50 p-1.5 rounded border border-term-border/50">
+                  <span className="text-term-muted text-[10px] font-mono tracking-widest whitespace-nowrap">SALVAR EM:</span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {state.projects.slice(0, 3).map(p => (
+                      <button
+                        key={p.id}
+                        className="term-btn-ghost text-xs px-2 py-0.5"
+                        onClick={() => addToProject(p.id, result)}
+                      >
+                        ▹ {p.name.length > 14 ? p.name.slice(0, 14) + '…' : p.name}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
           </div>
         </div>
+      )}
+
+      {showPossible && result && (
+        <PossibleSubnetsModal
+          subnets={possibleSubnets}
+          baseIp={result.networkAddress}
+          cidr={result.cidr}
+          onClose={() => setShowPossible(false)}
+        />
       )}
     </div>
   );

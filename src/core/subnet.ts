@@ -23,6 +23,7 @@ export interface SubnetResult {
   totalIPs: number;
   usableHosts: number;
   networkClass: string;
+  numberOfSubnets: number;
   ipBinary: string;
   maskBinary: string;
 }
@@ -57,6 +58,9 @@ export function calculateSubnet(ip: string, cidr: number): SubnetResult {
   // For /30 (2 usable) firstUsable == lastHost; for /31+/32 same as firstHost
   const firstUsableInt = cidr <= 30 ? firstHostInt + 1 : firstHostInt;
 
+  const parentCidr = cidr % 8 === 0 ? cidr : Math.floor(cidr / 8) * 8;
+  const numberOfSubnets = Math.pow(2, cidr - parentCidr);
+
   return {
     id: crypto.randomUUID(),
     timestamp: Date.now(),
@@ -73,7 +77,31 @@ export function calculateSubnet(ip: string, cidr: number): SubnetResult {
     totalIPs,
     usableHosts,
     networkClass: getNetworkClass(ip),
+    numberOfSubnets,
     ipBinary: ipv4ToBinary(ip),
     maskBinary: ipv4ToBinary(subnetMask),
   };
+}
+
+/** Gera as sub-redes dividindo sempre pelo limite do octeto atual */
+export function generatePossibleSubnets(ip: string, cidr: number): SubnetResult[] {
+  if (cidr <= 0 || cidr > 32) return [];
+  
+  // A regra de ouro pedida: se o CIDR já preenche um octeto inteiro (ex: /8, /16, /24),
+  // ele é a própria rede (1 rede só). Se for "quebrado" (ex: /26), quebra o octeto atual (parent /24).
+  const parentCidr = cidr % 8 === 0 ? cidr : Math.floor(cidr / 8) * 8;
+  
+  const parentMaskInt = parentCidr === 0 ? 0 : (~0 << (32 - parentCidr)) >>> 0;
+  const ipInt = ipv4ToInt(ip);
+  const parentNetworkInt = (ipInt & parentMaskInt) >>> 0;
+  
+  const step = Math.pow(2, 32 - cidr);
+  const numSubnets = Math.pow(2, cidr - parentCidr);
+  
+  const results: SubnetResult[] = [];
+  for (let i = 0; i < numSubnets; i++) {
+    const currentIpInt = parentNetworkInt + i * step;
+    results.push(calculateSubnet(intToIPv4(currentIpInt), cidr));
+  }
+  return results;
 }

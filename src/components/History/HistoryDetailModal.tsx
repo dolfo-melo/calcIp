@@ -1,10 +1,11 @@
-import { useEffect } from 'react';
-import { SubnetResult } from '../../core/subnet';
+import { useEffect, useState } from 'react';
+import { SubnetResult, generatePossibleSubnets } from '../../core/subnet';
 import { IPv6Result } from '../../core/ipv6';
 import { formatAddressCount } from '../../core/ipv6';
 import BinaryDisplay from '../Calculator/BinaryDisplay';
 import { exportSubnetToCSV, exportToJSON } from '../../export/csvExport';
 import { exportSubnetToPDF } from '../../export/pdfExport';
+import PossibleSubnetsModal from '../Calculator/PossibleSubnetsModal';
 
 type AnyResult = SubnetResult | IPv6Result;
 
@@ -30,6 +31,16 @@ export default function HistoryDetailModal({ result, onClose }: Props) {
   }, [onClose]);
 
   const v4 = isIPv4(result);
+  const [showPossible, setShowPossible] = useState(false);
+  const [possibleSubnets, setPossibleSubnets] = useState<SubnetResult[]>([]);
+
+  function handleShowPossible() {
+    if (!v4) return;
+    const v4Result = result as SubnetResult;
+    const subnets = generatePossibleSubnets(v4Result.networkAddress, v4Result.cidr);
+    setPossibleSubnets(subnets);
+    setShowPossible(true);
+  }
 
   return (
     <div
@@ -94,12 +105,13 @@ export default function HistoryDetailModal({ result, onClose }: Props) {
               </div>
 
               {/* IPv4 — secondary info */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 mb-4">
                 {[
                   { label: 'WILDCARD',    value: (result as SubnetResult).wildcardMask,                                             cls: 'text-term-mid' },
                   { label: 'TOTAL IPs',   value: (result as SubnetResult).totalIPs.toLocaleString('pt-BR'),                         cls: 'text-term-white' },
                   { label: 'HOSTS ÚTEIS', value: (result as SubnetResult).usableHosts.toLocaleString('pt-BR'),                      cls: 'text-term-bright text-glow-sm' },
                   { label: 'CLASSE',      value: (result as SubnetResult).networkClass,                                              cls: 'text-term-mid' },
+                  { label: 'SUB-REDES',   value: (result as SubnetResult).numberOfSubnets?.toLocaleString('pt-BR') || '1', cls: 'text-term-cyan text-glow-cyan' },
                 ].map(cell => (
                   <div key={cell.label} className="term-result-cell">
                     <div className="text-term-muted text-[10px] tracking-widest uppercase mb-1">{cell.label}</div>
@@ -147,53 +159,75 @@ export default function HistoryDetailModal({ result, onClose }: Props) {
 
           {/* ── Export bar ── */}
           <div className="border-t border-term-border pt-3">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-term-muted text-[10px] font-mono tracking-widest">EXPORTAR:</span>
-              {v4 ? (
-                <>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-term-muted text-[10px] font-mono tracking-widest mr-1">EXPORTAR:</span>
+                {v4 ? (
+                  <>
+                    <button
+                      className="term-btn-cyan"
+                      onClick={() => exportSubnetToCSV(
+                        [result as SubnetResult],
+                        `subnet_${(result as SubnetResult).networkAddress}_${(result as SubnetResult).cidr}.csv`
+                      )}
+                    >
+                      ↓ CSV
+                    </button>
+                    <button
+                      className="term-btn-amber"
+                      onClick={() => exportSubnetToPDF(
+                        [result as SubnetResult],
+                        `${(result as SubnetResult).networkAddress}/${(result as SubnetResult).cidr}`
+                      )}
+                    >
+                      ↓ PDF
+                    </button>
+                    <button
+                      className="term-btn-ghost text-xs px-3 py-1 tracking-widest"
+                      onClick={() => exportToJSON(
+                        result,
+                        `subnet_${(result as SubnetResult).networkAddress}_${(result as SubnetResult).cidr}.json`
+                      )}
+                    >
+                      ↓ JSON
+                    </button>
+                  </>
+                ) : (
                   <button
                     className="term-btn-cyan"
-                    onClick={() => exportSubnetToCSV(
-                      [result as SubnetResult],
-                      `subnet_${(result as SubnetResult).networkAddress}_${(result as SubnetResult).cidr}.csv`
-                    )}
-                  >
-                    ↓ CSV
-                  </button>
-                  <button
-                    className="term-btn-amber"
-                    onClick={() => exportSubnetToPDF(
-                      [result as SubnetResult],
-                      `${(result as SubnetResult).networkAddress}/${(result as SubnetResult).cidr}`
-                    )}
-                  >
-                    ↓ PDF
-                  </button>
-                  <button
-                    className="term-btn-ghost text-xs px-3 py-1 tracking-widest"
                     onClick={() => exportToJSON(
                       result,
-                      `subnet_${(result as SubnetResult).networkAddress}_${(result as SubnetResult).cidr}.json`
+                      `ipv6_${(result as IPv6Result).compressedAddress.replace(/:/g, '-')}.json`
                     )}
                   >
                     ↓ JSON
                   </button>
-                </>
-              ) : (
+                )}
+              </div>
+              
+              {v4 && (
                 <button
-                  className="term-btn-cyan"
-                  onClick={() => exportToJSON(
-                    result,
-                    `ipv6_${(result as IPv6Result).compressedAddress.replace(/:/g, '-')}.json`
-                  )}
+                  className="term-btn-cyan w-full sm:w-auto"
+                  onClick={handleShowPossible}
+                  disabled={(result as SubnetResult).cidr >= 31}
+                  title={(result as SubnetResult).cidr >= 31 ? "Não disponível para /31 ou /32" : "Mostrar possíveis sub-redes"}
                 >
-                  ↓ JSON
+                  ☷ TODAS AS SUB-REDES
                 </button>
               )}
             </div>
           </div>
         </div>
       </div>
+
+      {showPossible && v4 && (
+        <PossibleSubnetsModal
+          subnets={possibleSubnets}
+          baseIp={(result as SubnetResult).networkAddress}
+          cidr={(result as SubnetResult).cidr}
+          onClose={() => setShowPossible(false)}
+        />
+      )}
     </div>
   );
 }
